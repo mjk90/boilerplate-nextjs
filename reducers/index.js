@@ -7,9 +7,9 @@ import { Saga } from 'redux-saga';
 import { combinedReducer as indexReducer, combinedSaga as indexSaga } from '../pages/index/reducers';
 
 export const rootSaga = [
-  ...actionDetailsSaga
+  ...indexSaga
 ];
 
 export const rootReducer = combineReducers({
-  actionDetails: actionDetailsReducer
+  indexPage: indexReducer
 });

@@ -1,10 +1,10 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { withRedux } from '../lib/redux'
+import { withRedux } from '../../lib/redux'
 import { Api, JsonRpc, RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import fetch from 'isomorphic-unfetch';
+import { actions } from './reducers'
 
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
@@ -50,9 +50,10 @@ const styles = theme => ({
 });
 
 const IndexPage = () => {
-  // Tick the time every second
-  const dispatch = useDispatch()
-  const temp = useSelector(state => ({ data: state.data }), shallowEqual);
+  const dispatch = useDispatch();
+  const indexStore = useSelector(state => state.indexPage, shallowEqual);
+  const { data } = indexStore;
+  console.log("indexStore", indexStore);
 
   // generic function to handle form events (e.g. "submit" / "reset")
   // push transactions to the blockchain by using eosjs
@@ -102,21 +103,7 @@ const IndexPage = () => {
         expireSeconds: 30,
       });
 
-      console.log(result);
-      // this.getTable();
-      const table_rows = await rpc.get_table_rows({
-        "json": true,
-        "code": "notechainacc",   // contract who owns the table
-        "scope": "notechainacc",  // scope of the table
-        "table": "notestruct",    // name of the table as specified by the contract abi
-        "limit": 100,
-      });
-    
-      console.log("table_rows", table_rows);
-      dispatch({
-        type: 'GET_TABLE',
-        data: table_rows
-      });
+      dispatch(actions.fetchStart());
     } catch (e) {
       console.log('Caught exception: ' + e);
       if (e instanceof RpcError) {
@@ -141,9 +128,8 @@ const IndexPage = () => {
       </CardContent>
     </Card>
   );
-  console.log("temp.data.rows", temp.data.rows);
   
-  let noteCards = temp.data.rows && temp.data.rows.map((row, i) =>
+  let noteCards = !!data && data.map((row, i) =>
     generateCard(i, row.timestamp, row.user, row.note));
 
   return (
@@ -199,25 +185,28 @@ const IndexPage = () => {
   )
 }
 
-IndexPage.getInitialProps = async ({ reduxStore }) => {
-  const { dispatch } = reduxStore;  
-  const rpc = new JsonRpc(endpoint);
-  const table_rows = await rpc.get_table_rows({
-    "json": true,
-    "code": "notechainacc",   // contract who owns the table
-    "scope": "notechainacc",  // scope of the table
-    "table": "notestruct",    // name of the table as specified by the contract abi
-    "limit": 100,
-  });
+IndexPage.getInitialProps = async (context) => {
+  const { reduxStore } = context;  
+  // const rpc = new JsonRpc(endpoint);
+  // const table_rows = await rpc.get_table_rows({
+  //   "json": true,
+  //   "code": "notechainacc",   // contract who owns the table
+  //   "scope": "notechainacc",  // scope of the table
+  //   "table": "notestruct",    // name of the table as specified by the contract abi
+  //   "limit": 100,
+  // });
 
-  console.log("table_rows", table_rows);
+  // console.log("table_rows", table_rows);
 
-  dispatch({
-    type: 'GET_TABLE',
-    data: table_rows
-  });
+  // dispatch({
+  //   type: 'GET_TABLE',
+  //   data: table_rows
+  // });
+  
+  // const dispatch = useDispatch();
+  reduxStore.dispatch(actions.fetchStart());
 
-  return {}
+  return {};
 }
 
 export default withStyles(styles)(withRedux(IndexPage))
