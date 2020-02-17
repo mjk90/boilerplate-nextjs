@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { withRedux } from '../../lib/redux';
-import { Api, JsonRpc, RpcError } from 'eosjs';
-import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { connect } from 'react-redux';
 import fetch from 'isomorphic-unfetch';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -42,7 +39,7 @@ const styles = theme => ({
   },
 });
 
-const AboutPage = () => {
+const About = () => {
   const [show, setShow] = useState(false);
 
   return (
@@ -74,4 +71,4 @@ const AboutPage = () => {
   )
 }
 
-export default withStyles(styles)(withRedux(AboutPage))
+export default connect()(About);

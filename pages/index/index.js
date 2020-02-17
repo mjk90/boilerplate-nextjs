@@ -1,8 +1,7 @@
 import React from 'react';
-import { withRedux } from '../../lib/redux';
 import { Api, JsonRpc, RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual, connect } from 'react-redux';
 import fetch from 'isomorphic-unfetch';
 import { actions } from './reducers'
 import Link from 'next/link';
@@ -54,174 +53,155 @@ const styles = theme => ({
   },
 });
 
-const IndexPage = () => {
-  const dispatch = useDispatch();
-  const indexStore = useSelector(state => state.indexPage, shallowEqual);
-  const { data } = indexStore;
-  console.log("indexStore", indexStore);
+const Index = () => {
+    const dispatch = useDispatch();
+    const indexStore = useSelector(state => state.indexPage, shallowEqual);
+    const { data } = indexStore;
 
-  // generic function to handle form events (e.g. "submit" / "reset")
-  // push transactions to the blockchain by using eosjs
-  const handleFormEvent = async (event) => {
-    // stop default behaviour
-    event.preventDefault();
+    // generic function to handle form events (e.g. "submit" / "reset")
+    // push transactions to the blockchain by using eosjs
+    const handleFormEvent = async (event) => {
+      // stop default behaviour
+      event.preventDefault();
 
-    // collect form data
-    let account = event.target.account.value;
-    let privateKey = event.target.privateKey.value;
-    let note = event.target.note.value;
+      // collect form data
+      let account = event.target.account.value;
+      let privateKey = event.target.privateKey.value;
+      let note = event.target.note.value;
 
-    // prepare variables for the switch below to send transactions
-    let actionName = "";
-    let actionData = {};
+      // prepare variables for the switch below to send transactions
+      let actionName = "";
+      let actionData = {};
 
-    // define actionName and action according to event type
-    switch (event.type) {
-      case "submit":
-        actionName = "update";
-        actionData = {
-          user: account,
-          note: note,
-        };
-        break;
-      default:
-        return;
-    }
+      // define actionName and action according to event type
+      switch (event.type) {
+        case "submit":
+          actionName = "update";
+          actionData = {
+            user: account,
+            note: note,
+          };
+          break;
+        default:
+          return;
+      }
 
-    // eosjs function call: connect to the blockchain
-    const rpc = new JsonRpc(endpoint);
-    const signatureProvider = new JsSignatureProvider([privateKey]);
-    const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
-    try {
-      const result = await api.transact({
-        actions: [{
-          account: "notechainacc",
-          name: actionName,
-          authorization: [{
-            actor: account,
-            permission: 'active',
-          }],
-          data: actionData,
-        }]
-      }, {
-          blocksBehind: 3,
-          expireSeconds: 30,
-        });
+      // eosjs function call: connect to the blockchain
+      const rpc = new JsonRpc(endpoint);
+      const signatureProvider = new JsSignatureProvider([privateKey]);
+      const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
+      try {
+        const result = await api.transact({
+          actions: [{
+            account: "notechainacc",
+            name: actionName,
+            authorization: [{
+              actor: account,
+              permission: 'active',
+            }],
+            data: actionData,
+          }]
+        }, {
+            blocksBehind: 3,
+            expireSeconds: 30,
+          });
 
-      dispatch(actions.fetchStart());
-    } catch (e) {
-      console.log('Caught exception: ' + e);
-      if (e instanceof RpcError) {
-        console.log(JSON.stringify(e.json, null, 2));
+        dispatch(actions.fetchStart());
+      } catch (e) {
+        console.log('Caught exception: ' + e);
+        if (e instanceof RpcError) {
+          console.log(JSON.stringify(e.json, null, 2));
+        }
       }
     }
-  }
 
-  // generate each note as a card
-  const generateCard = (key, timestamp, user, note) => (
-    <Card className={styles.card} key={key}>
-      <CardContent>
-        <Typography variant="h4" component="h2">
-          {user}
-        </Typography>
-        <Typography style={{ fontSize: 12 }} color="textSecondary" gutterBottom>
-          {new Date(timestamp + "+00:00").toString()}
-        </Typography>
-        <Typography component="pre">
-          {note}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
+    // generate each note as a card
+    const generateCard = (key, timestamp, user, note) => (
+      <Card className={styles.card} key={key}>
+        <CardContent>
+          <Typography variant="h4" component="h2">
+            {user}
+          </Typography>
+          <Typography style={{ fontSize: 12 }} color="textSecondary" gutterBottom>
+            {new Date(timestamp + "+00:00").toString()}
+          </Typography>
+          <Typography component="pre">
+            {note}
+          </Typography>
+        </CardContent>
+      </Card>
+    );
 
-  let noteCards = !!data && data.map((row, i) =>
-    generateCard(i, row.timestamp, row.user, row.note));
+    let noteCards = !!data && data.map((row, i) =>
+      generateCard(i, row.timestamp, row.user, row.note));
 
-  return (
-    <div>
-      <Head>
-        <title>Index Page</title>
-        <meta name="description" content="The Home Page" />
-      </Head>
-      <AppBar position="static" color="default">
-        <Toolbar>
-          <Typography variant="h5" color="inherit">
-            Note Chain
+    return (
+      <div>
+        <Head>
+          <title>Index Page</title>
+          <meta name="description" content="The Home Page" />
+        </Head>
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Typography variant="h5" color="inherit">
+              Note Chain
             </Typography>
-          <Link href="/">
-            <a style={styles.link}>Home</a>
-          </Link>
-          <Link href="/about">
-            <a style={styles.link}>About</a>
-          </Link>
-        </Toolbar>
-      </AppBar>
-      {noteCards}
-      <Paper className={styles.paper}>
-        <form onSubmit={(e) => handleFormEvent(e)}>
-          <TextField
-            name="account"
-            autoComplete="off"
-            label="Account"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="privateKey"
-            autoComplete="off"
-            label="Private key"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="note"
-            autoComplete="off"
-            label="Note (Optional)"
-            margin="normal"
-            multiline
-            rows="10"
-            fullWidth
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            className={styles.formButton}
-            type="submit">
-            Add / Update note
+            <Link href="/">
+              <a style={styles.link}>Home</a>
+            </Link>
+            <Link href="/about">
+              <a style={styles.link}>About</a>
+            </Link>
+          </Toolbar>
+        </AppBar>
+        {noteCards}
+        <Paper className={styles.paper}>
+          <form onSubmit={(e) => handleFormEvent(e)}>
+            <TextField
+              name="account"
+              autoComplete="off"
+              label="Account"
+              margin="normal"
+              fullWidth
+            />
+            <TextField
+              name="privateKey"
+              autoComplete="off"
+              label="Private key"
+              margin="normal"
+              fullWidth
+            />
+            <TextField
+              name="note"
+              autoComplete="off"
+              label="Note (Optional)"
+              margin="normal"
+              multiline
+              rows="10"
+              fullWidth
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              className={styles.formButton}
+              type="submit">
+              Add / Update note
             </Button>
-        </form>
-      </Paper>
-      <pre className={styles.pre}>
-        Below is a list of pre-created accounts information for add/update note:
+          </form>
+        </Paper>
+        <pre className={styles.pre}>
+          Below is a list of pre-created accounts information for add/update note:
           <br /><br />
-        accounts = {JSON.stringify(accounts, null, 2)}
-      </pre>
-    </div>
-  )
+          accounts = {JSON.stringify(accounts, null, 2)}
+        </pre>
+      </div>
+    )
 }
 
-IndexPage.getInitialProps = async (context) => {
-  const { reduxStore } = context;
-  // const rpc = new JsonRpc(endpoint);
-  // const table_rows = await rpc.get_table_rows({
-  //   "json": true,
-  //   "code": "notechainacc",   // contract who owns the table
-  //   "scope": "notechainacc",  // scope of the table
-  //   "table": "notestruct",    // name of the table as specified by the contract abi
-  //   "limit": 100,
-  // });
-
-  // console.log("table_rows", table_rows);
-
-  // dispatch({
-  //   type: 'GET_TABLE',
-  //   data: table_rows
-  // });
-
-  // const dispatch = useDispatch();
-  reduxStore.dispatch(actions.fetchStart());
-
+Index.getInitialProps = (props) => {
+  const { store } = props.ctx;
+  store.dispatch(actions.fetchStart());
   return {};
 }
 
-export default /*withStyles(styles)*/(withRedux(IndexPage))
+export default connect()(Index);

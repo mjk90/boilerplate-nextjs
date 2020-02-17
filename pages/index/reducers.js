@@ -65,17 +65,12 @@ export function* watchFetchStartSaga() {
 export const combinedSaga = [watchFetchStartSaga];
 
 
-const initialState = [{
-  prim_key: 2,
-  user: 'useraaaaaaab1',
-  note: 'bbb',
-  timestamp: '2020-02-17T06:15:03.500'
-}];
+const initialState = [];
 
 const dataReducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_START:
-      return initialState;
+      return state;
     case FETCH_FULFILLED:
       console.log("FETCH_FULFILLED", action.payload);      
       return action.payload;
