@@ -1,10 +1,12 @@
 import React from 'react';
-import { withRedux } from '../../lib/redux'
+import { withRedux } from '../../lib/redux';
 import { Api, JsonRpc, RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import fetch from 'isomorphic-unfetch';
 import { actions } from './reducers'
+import Link from 'next/link';
+import Head from 'next/head';
 
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
@@ -20,16 +22,19 @@ import Button from '@material-ui/core/Button';
 const endpoint = "http://localhost:8888";
 
 const accounts = [
-  {"name":"useraaaaaaaa", "privateKey":"5K7mtrinTFrVTduSxizUc5hjXJEtTjVTsqSHeBHes1Viep86FP5", "publicKey":"EOS6kYgMTCh1iqpq9XGNQbEi8Q6k5GujefN9DSs55dcjVyFAq7B6b"},
-  {"name":"useraaaaaaab", "privateKey":"5KLqT1UFxVnKRWkjvhFur4sECrPhciuUqsYRihc1p9rxhXQMZBg", "publicKey":"EOS78RuuHNgtmDv9jwAzhxZ9LmC6F295snyQ9eUDQ5YtVHJ1udE6p"},
-  {"name":"useraaaaaaac", "privateKey":"5K2jun7wohStgiCDSDYjk3eteRH1KaxUQsZTEmTGPH4GS9vVFb7", "publicKey":"EOS5yd9aufDv7MqMquGcQdD6Bfmv6umqSuh9ru3kheDBqbi6vtJ58"},
-  {"name":"useraaaaaaad", "privateKey":"5KNm1BgaopP9n5NqJDo9rbr49zJFWJTMJheLoLM5b7gjdhqAwCx", "publicKey":"EOS8LoJJUU3dhiFyJ5HmsMiAuNLGc6HMkxF4Etx6pxLRG7FU89x6X"},
-  {"name":"useraaaaaaae", "privateKey":"5KE2UNPCZX5QepKcLpLXVCLdAw7dBfJFJnuCHhXUf61hPRMtUZg", "publicKey":"EOS7XPiPuL3jbgpfS3FFmjtXK62Th9n2WZdvJb6XLygAghfx1W7Nb"},
-  {"name":"useraaaaaaaf", "privateKey":"5KaqYiQzKsXXXxVvrG8Q3ECZdQAj2hNcvCgGEubRvvq7CU3LySK", "publicKey":"EOS5btzHW33f9zbhkwjJTYsoyRzXUNstx1Da9X2nTzk8BQztxoP3H"},
-  {"name":"useraaaaaaag", "privateKey":"5KFyaxQW8L6uXFB6wSgC44EsAbzC7ideyhhQ68tiYfdKQp69xKo", "publicKey":"EOS8Du668rSVDE3KkmhwKkmAyxdBd73B51FKE7SjkKe5YERBULMrw"}
+  { "name": "useraaaaaaaa", "privateKey": "5K7mtrinTFrVTduSxizUc5hjXJEtTjVTsqSHeBHes1Viep86FP5", "publicKey": "EOS6kYgMTCh1iqpq9XGNQbEi8Q6k5GujefN9DSs55dcjVyFAq7B6b" },
+  { "name": "useraaaaaaab", "privateKey": "5KLqT1UFxVnKRWkjvhFur4sECrPhciuUqsYRihc1p9rxhXQMZBg", "publicKey": "EOS78RuuHNgtmDv9jwAzhxZ9LmC6F295snyQ9eUDQ5YtVHJ1udE6p" },
+  { "name": "useraaaaaaac", "privateKey": "5K2jun7wohStgiCDSDYjk3eteRH1KaxUQsZTEmTGPH4GS9vVFb7", "publicKey": "EOS5yd9aufDv7MqMquGcQdD6Bfmv6umqSuh9ru3kheDBqbi6vtJ58" },
+  { "name": "useraaaaaaad", "privateKey": "5KNm1BgaopP9n5NqJDo9rbr49zJFWJTMJheLoLM5b7gjdhqAwCx", "publicKey": "EOS8LoJJUU3dhiFyJ5HmsMiAuNLGc6HMkxF4Etx6pxLRG7FU89x6X" },
+  { "name": "useraaaaaaae", "privateKey": "5KE2UNPCZX5QepKcLpLXVCLdAw7dBfJFJnuCHhXUf61hPRMtUZg", "publicKey": "EOS7XPiPuL3jbgpfS3FFmjtXK62Th9n2WZdvJb6XLygAghfx1W7Nb" },
+  { "name": "useraaaaaaaf", "privateKey": "5KaqYiQzKsXXXxVvrG8Q3ECZdQAj2hNcvCgGEubRvvq7CU3LySK", "publicKey": "EOS5btzHW33f9zbhkwjJTYsoyRzXUNstx1Da9X2nTzk8BQztxoP3H" },
+  { "name": "useraaaaaaag", "privateKey": "5KFyaxQW8L6uXFB6wSgC44EsAbzC7ideyhhQ68tiYfdKQp69xKo", "publicKey": "EOS8Du668rSVDE3KkmhwKkmAyxdBd73B51FKE7SjkKe5YERBULMrw" }
 ];
 // set up styling classes using material-ui "withStyles"
 const styles = theme => ({
+  link: {
+    marginRight: 15
+  },
   card: {
     margin: 20,
   },
@@ -99,9 +104,9 @@ const IndexPage = () => {
           data: actionData,
         }]
       }, {
-        blocksBehind: 3,
-        expireSeconds: 30,
-      });
+          blocksBehind: 3,
+          expireSeconds: 30,
+        });
 
       dispatch(actions.fetchStart());
     } catch (e) {
@@ -119,8 +124,8 @@ const IndexPage = () => {
         <Typography variant="h4" component="h2">
           {user}
         </Typography>
-        <Typography style={{fontSize:12}} color="textSecondary" gutterBottom>
-          {new Date(timestamp+"+00:00").toString()}
+        <Typography style={{ fontSize: 12 }} color="textSecondary" gutterBottom>
+          {new Date(timestamp + "+00:00").toString()}
         </Typography>
         <Typography component="pre">
           {note}
@@ -128,22 +133,32 @@ const IndexPage = () => {
       </CardContent>
     </Card>
   );
-  
+
   let noteCards = !!data && data.map((row, i) =>
     generateCard(i, row.timestamp, row.user, row.note));
 
   return (
     <div>
+      <Head>
+        <title>Index Page</title>
+        <meta name="description" content="The Home Page" />
+      </Head>
       <AppBar position="static" color="default">
         <Toolbar>
           <Typography variant="h5" color="inherit">
             Note Chain
             </Typography>
+          <Link href="/">
+            <a style={styles.link}>Home</a>
+          </Link>
+          <Link href="/about">
+            <a style={styles.link}>About</a>
+          </Link>
         </Toolbar>
       </AppBar>
       {noteCards}
       <Paper className={styles.paper}>
-        <form onSubmit={(e) =>handleFormEvent(e)}>
+        <form onSubmit={(e) => handleFormEvent(e)}>
           <TextField
             name="account"
             autoComplete="off"
@@ -186,7 +201,7 @@ const IndexPage = () => {
 }
 
 IndexPage.getInitialProps = async (context) => {
-  const { reduxStore } = context;  
+  const { reduxStore } = context;
   // const rpc = new JsonRpc(endpoint);
   // const table_rows = await rpc.get_table_rows({
   //   "json": true,
@@ -202,11 +217,11 @@ IndexPage.getInitialProps = async (context) => {
   //   type: 'GET_TABLE',
   //   data: table_rows
   // });
-  
+
   // const dispatch = useDispatch();
   reduxStore.dispatch(actions.fetchStart());
 
   return {};
 }
 
-export default withStyles(styles)(withRedux(IndexPage))
+export default /*withStyles(styles)*/(withRedux(IndexPage))
