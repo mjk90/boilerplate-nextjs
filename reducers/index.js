@@ -8,8 +8,8 @@ import { combinedReducer as indexReducer, combinedSaga as indexSaga } from '../p
 import { combinedReducer as aboutReducer, combinedSaga as aboutSaga } from '../pages/about/reducers';
 
 export function* rootSaga() {
-  yield fork(...indexSaga);
-  yield fork(...aboutSaga);
+  yield fork(...indexSaga, 'indexPage');
+  yield fork(...aboutSaga, 'aboutPage');
 }
 
 export const rootReducer = combineReducers({
