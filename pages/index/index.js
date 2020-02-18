@@ -2,7 +2,7 @@ import React from 'react';
 import { Api, JsonRpc, RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import { useDispatch, useSelector, shallowEqual, connect } from 'react-redux';
-import { actions } from './reducers'
+import { actions } from '../../reducers/home/reducers'
 import Link from 'next/link';
 import Head from 'next/head';
 

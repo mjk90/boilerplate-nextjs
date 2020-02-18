@@ -4,7 +4,7 @@ import fetch from 'isomorphic-unfetch';
 import Link from 'next/link';
 import Head from 'next/head';
 import dynamic from "next/dynamic";
-import { actions } from './reducers'
+import { actions } from '../../reducers/about/reducers'
 
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
@@ -12,7 +12,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
-const TestComponent = dynamic(() => import("./components/testComponent"), {
+const TestComponent = dynamic(() => import("../../components/testComponent"), {
   loading: () => <p>Loading...</p>
 });
 
