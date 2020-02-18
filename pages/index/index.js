@@ -17,6 +17,13 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
+import styled from 'styled-components'
+
+const StyledButton = styled(Button)`
+  margin-top: 10px;
+  width: 100%;
+`;
+
 const endpoint = "http://localhost:8888";
 
 const accounts = [
@@ -178,13 +185,12 @@ const Index = (props) => {
               rows="10"
               fullWidth
             />
-            <Button
+            <StyledButton
               variant="contained"
               color="primary"
-              className={classes.formButton}
               type="submit">
               Add / Update note
-            </Button>
+            </StyledButton>
           </form>
         </Paper>
         <pre className={classes.pre}>
