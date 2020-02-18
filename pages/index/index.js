@@ -2,7 +2,6 @@ import React from 'react';
 import { Api, JsonRpc, RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import { useDispatch, useSelector, shallowEqual, connect } from 'react-redux';
-import fetch from 'isomorphic-unfetch';
 import { actions } from './reducers'
 import Link from 'next/link';
 import Head from 'next/head';
@@ -31,9 +30,6 @@ const accounts = [
 ];
 // set up styling classes using material-ui "withStyles"
 const styles = theme => ({
-  link: {
-    marginRight: 15
-  },
   card: {
     margin: 20,
   },
@@ -53,10 +49,12 @@ const styles = theme => ({
   },
 });
 
-const Index = () => {
+const Index = (props) => {
     const dispatch = useDispatch();
     const indexStore = useSelector(state => state.indexPage, shallowEqual);
     const { data } = indexStore;
+    const { classes } = props;
+    console.log("classes", classes);    
 
     // generic function to handle form events (e.g. "submit" / "reset")
     // push transactions to the blockchain by using eosjs
@@ -117,7 +115,7 @@ const Index = () => {
 
     // generate each note as a card
     const generateCard = (key, timestamp, user, note) => (
-      <Card className={styles.card} key={key}>
+      <Card className={classes.card} key={key}>
         <CardContent>
           <Typography variant="h4" component="h2">
             {user}
@@ -147,15 +145,15 @@ const Index = () => {
               Note Chain
             </Typography>
             <Link href="/">
-              <a style={styles.link}>Home</a>
+              <a>Home</a>
             </Link>
             <Link href="/about">
-              <a style={styles.link}>About</a>
+              <a>About</a>
             </Link>
           </Toolbar>
         </AppBar>
         {noteCards}
-        <Paper className={styles.paper}>
+        <Paper className={classes.paper}>
           <form onSubmit={(e) => handleFormEvent(e)}>
             <TextField
               name="account"
@@ -183,13 +181,13 @@ const Index = () => {
             <Button
               variant="contained"
               color="primary"
-              className={styles.formButton}
+              className={classes.formButton}
               type="submit">
               Add / Update note
             </Button>
           </form>
         </Paper>
-        <pre className={styles.pre}>
+        <pre className={classes.pre}>
           Below is a list of pre-created accounts information for add/update note:
           <br /><br />
           accounts = {JSON.stringify(accounts, null, 2)}
@@ -204,4 +202,4 @@ Index.getInitialProps = (props) => {
   return {};
 }
 
-export default connect()(Index);
+export default connect()(withStyles(styles)(Index));

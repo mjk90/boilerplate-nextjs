@@ -1,15 +1,18 @@
 import { combineReducers } from 'redux';
-import { Saga } from 'redux-saga';
+import { fork } from 'redux-saga/effects';
 
 /**
  * Import reducers and sagas here
  */
 import { combinedReducer as indexReducer, combinedSaga as indexSaga } from '../pages/index/reducers';
+import { combinedReducer as aboutReducer, combinedSaga as aboutSaga } from '../pages/about/reducers';
 
-export const rootSaga = [
-  ...indexSaga
-];
+export function* rootSaga() {
+  yield fork(...indexSaga);
+  yield fork(...aboutSaga);
+}
 
 export const rootReducer = combineReducers({
-  indexPage: indexReducer
+  indexPage: indexReducer,
+  aboutPage: aboutReducer
 });

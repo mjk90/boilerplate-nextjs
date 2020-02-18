@@ -14,9 +14,7 @@ export const initializeStore = (initialState) => {
     composeWithDevTools(applyMiddleware(...middlewares))
   );
 
-  // rootSaga.forEach(sagaMiddleware.run);
-  // store.sagaTask = sagaMiddleware.run(rootSaga);
-  store.sagaTask = sagaMiddleware.run(rootSaga[0])
+  store.sagaTask = sagaMiddleware.run(rootSaga);
   
   return store;
 }

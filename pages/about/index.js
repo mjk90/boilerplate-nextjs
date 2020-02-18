@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, shallowEqual } from 'react-redux';
 import fetch from 'isomorphic-unfetch';
 import Link from 'next/link';
 import Head from 'next/head';
 import dynamic from "next/dynamic";
+import { actions } from './reducers'
 
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
@@ -41,6 +42,8 @@ const styles = theme => ({
 
 const About = () => {
   const [show, setShow] = useState(false);
+  const aboutStore = useSelector(state => state.aboutPage, shallowEqual);
+  const { data } = aboutStore;
 
   return (
     <div>
@@ -62,6 +65,8 @@ const About = () => {
         </Toolbar>
       </AppBar>
 
+      <div>{data && JSON.stringify(data)}</div>
+
       <div>
         <h2>Dynamically Imported Component:</h2>
         <button onClick={() => setShow(!show)}>Show/Hide</button>
@@ -69,6 +74,12 @@ const About = () => {
       </div>
     </div>
   )
+}
+
+About.getInitialProps = (props) => {
+  const { store } = props.ctx;
+  store.dispatch(actions.fetchStart());
+  return {};
 }
 
 export default connect()(About);
