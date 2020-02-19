@@ -3,7 +3,7 @@ import { Api, JsonRpc, RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import { useDispatch, useSelector, shallowEqual, connect } from 'react-redux';
 import { actions } from '../../reducers/home/reducers'
-import Link from 'next/link';
+import NavBar from '../../components/navBar';
 import Head from 'next/head';
 
 // material-ui dependencies
@@ -16,8 +16,7 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const StyledButton = styled(Button)`
   margin-top: 10px;
@@ -61,7 +60,6 @@ const Index = (props) => {
     const indexStore = useSelector(state => state.indexPage, shallowEqual);
     const { data } = indexStore;
     const { classes } = props;
-    console.log("classes", classes);    
 
     // generic function to handle form events (e.g. "submit" / "reset")
     // push transactions to the blockchain by using eosjs
@@ -146,20 +144,11 @@ const Index = (props) => {
           <title>Index Page</title>
           <meta name="description" content="The Home Page" />
         </Head>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography variant="h5" color="inherit">
-              Note Chain
-            </Typography>
-            <Link href="/">
-              <a>Home</a>
-            </Link>
-            <Link href="/about">
-              <a>About</a>
-            </Link>
-          </Toolbar>
-        </AppBar>
+        
+        <NavBar title="Login" />
+
         {noteCards}
+
         <Paper className={classes.paper}>
           <form onSubmit={(e) => handleFormEvent(e)}>
             <TextField

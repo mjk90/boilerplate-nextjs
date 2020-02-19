@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { connect, useSelector, shallowEqual } from 'react-redux';
 import fetch from 'isomorphic-unfetch';
-import Link from 'next/link';
+import NavBar from '../../components/navBar';
 import Head from 'next/head';
 import dynamic from "next/dynamic";
-import { actions } from '../../reducers/about/reducers'
+import { actions } from '../../reducers/about/reducers';
 
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
@@ -51,19 +51,8 @@ const About = () => {
         <title>About Page</title>
         <meta name="description" content="The About Page" />
       </Head>
-      <AppBar position="static" color="default">
-        <Toolbar>
-          <Typography variant="h5" color="inherit">
-            Note Chain - About
-          </Typography>
-          <Link href="/">
-            <a style={styles.link}>Home</a>
-          </Link>
-          <Link href="/about">
-            <a style={styles.link}>About</a>
-          </Link>
-        </Toolbar>
-      </AppBar>
+
+      <NavBar title="Login" />
 
       <div>{data && JSON.stringify(data)}</div>
 
