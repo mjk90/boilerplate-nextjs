@@ -6,38 +6,8 @@ import Head from 'next/head';
 import dynamic from "next/dynamic";
 import { actions } from '../../reducers/about/reducers';
 
-// material-ui dependencies
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-
 const TestComponent = dynamic(() => import("../../components/testComponent"), {
   loading: () => <p>Loading...</p>
-});
-
-// set up styling classes using material-ui "withStyles"
-const styles = theme => ({
-  link: {
-    marginRight: 15
-  },
-  card: {
-    margin: 20,
-  },
-  paper: {
-    ...theme.mixins.gutters(),
-    paddingTop: "20px",
-    paddingBottom: "20px",
-  },
-  formButton: {
-    marginTop: "10px",
-    width: "100%",
-  },
-  pre: {
-    background: "#ccc",
-    padding: 10,
-    marginBottom: 0,
-  },
 });
 
 const About = () => {

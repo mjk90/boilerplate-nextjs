@@ -5,11 +5,9 @@ import { useDispatch, useSelector, shallowEqual, connect } from 'react-redux';
 import { actions } from '../../reducers/home/reducers'
 import NavBar from '../../components/navBar';
 import Head from 'next/head';
+import fetch from 'isomorphic-unfetch';
 
 // material-ui dependencies
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -21,6 +19,18 @@ import styled from 'styled-components';
 const StyledButton = styled(Button)`
   margin-top: 10px;
   width: 100%;
+`;
+const StyledPaper = styled(Paper)`
+  padding-top: 20px;
+  padding-bottom: 20px;
+`;
+const StyledCard = styled(Card)`
+  margin: 20px;
+`;
+const StyledPre = styled.pre`
+  background: #ccc;
+  padding: 10px;
+  margin-bottom: 0;
 `;
 
 const endpoint = "http://localhost:8888";
@@ -34,26 +44,6 @@ const accounts = [
   { "name": "useraaaaaaaf", "privateKey": "5KaqYiQzKsXXXxVvrG8Q3ECZdQAj2hNcvCgGEubRvvq7CU3LySK", "publicKey": "EOS5btzHW33f9zbhkwjJTYsoyRzXUNstx1Da9X2nTzk8BQztxoP3H" },
   { "name": "useraaaaaaag", "privateKey": "5KFyaxQW8L6uXFB6wSgC44EsAbzC7ideyhhQ68tiYfdKQp69xKo", "publicKey": "EOS8Du668rSVDE3KkmhwKkmAyxdBd73B51FKE7SjkKe5YERBULMrw" }
 ];
-// set up styling classes using material-ui "withStyles"
-const styles = theme => ({
-  card: {
-    margin: 20,
-  },
-  paper: {
-    ...theme.mixins.gutters(),
-    paddingTop: "20px",
-    paddingBottom: "20px",
-  },
-  formButton: {
-    marginTop: "10px",
-    width: "100%",
-  },
-  pre: {
-    background: "#ccc",
-    padding: 10,
-    marginBottom: 0,
-  },
-});
 
 const Index = (props) => {
     const dispatch = useDispatch();
@@ -120,7 +110,7 @@ const Index = (props) => {
 
     // generate each note as a card
     const generateCard = (key, timestamp, user, note) => (
-      <Card className={classes.card} key={key}>
+      <StyledCard key={key}>
         <CardContent>
           <Typography variant="h4" component="h2">
             {user}
@@ -132,7 +122,7 @@ const Index = (props) => {
             {note}
           </Typography>
         </CardContent>
-      </Card>
+      </StyledCard>
     );
 
     let noteCards = !!data && data.map((row, i) =>
@@ -149,7 +139,7 @@ const Index = (props) => {
 
         {noteCards}
 
-        <Paper className={classes.paper}>
+        <StyledPaper>
           <form onSubmit={(e) => handleFormEvent(e)}>
             <TextField
               name="account"
@@ -181,12 +171,12 @@ const Index = (props) => {
               Add / Update note
             </StyledButton>
           </form>
-        </Paper>
-        <pre className={classes.pre}>
+        </StyledPaper>
+        <StyledPre>
           Below is a list of pre-created accounts information for add/update note:
           <br /><br />
           accounts = {JSON.stringify(accounts, null, 2)}
-        </pre>
+        </StyledPre>
       </div>
     )
 }
@@ -197,4 +187,4 @@ Index.getInitialProps = (props) => {
   return {};
 }
 
-export default connect()(withStyles(styles)(Index));
+export default connect()(Index);

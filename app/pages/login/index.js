@@ -23,6 +23,7 @@ const Login = () => {
 
       <NavBar title="Login" />
 
+      <p>Click 'Get Token' to recieve a JWT, which will last 60 seconds. If you have a JWT, you can access the secret page. If not, you will be redirected to home page on clicking 'Secret Page' link.</p>
       <button onClick={() => onLoginClick()}>Get Token</button>
       <br></br>
       <br></br>
