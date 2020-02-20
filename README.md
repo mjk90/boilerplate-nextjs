@@ -1,6 +1,12 @@
 # Server Side Rendering Boilerplate POC
 
-This repo contains two folders, `app` and `server`:
+## To set everything up at once, you can run `quick_start.sh`.
+
+This repo contains three folders, `eosio_docker`, `app` and `server`:
+
+## eosio_docker
+
+`eosio_docker` contains everything needed to set up the local blockchain containing the `notechain` application.
 
 ## app
 `app` contains a Next.js / Redux app with a few pages showing some different features, including:
